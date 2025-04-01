@@ -13,6 +13,7 @@ import com.projeto.course.repositories.UserRepository;
 import com.projeto.course.services.exceptions.DataBaseException;
 import com.projeto.course.services.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -46,9 +47,13 @@ public class UserService {
 	
 	@Transactional
 	public User update(Long id, User obj) {
+		try {
 		User entity = repository.getReferenceById(id);
 		updateData(entity, obj);
 		return repository.save(entity);
+		}catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
 	}
 
 	private void updateData(User entity, User obj) {
